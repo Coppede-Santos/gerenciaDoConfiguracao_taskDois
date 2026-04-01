@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Receitas</title>
+    <style>
+        body { font-family: sans-serif; margin: 2rem; background-color: #f4f4f4; }
+        .container { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f8f9fa; }
+        .actions a { margin-right: 0.5rem; text-decoration: none; color: #007bff; }
+        .actions a:hover { text-decoration: underline; }
+        .btn { display: inline-block; padding: 0.5rem 1rem; background-color: #28a745; color: white; text-decoration: none; border-radius: 4px; margin-bottom: 1rem; }
+        .btn:hover { background-color: #218838; }
+        .header { display: flex; justify-content: space-between; align-items: center; }
+        .btn-danger { background-color: #dc3545; }
+        .btn-danger:hover { background-color: #c82333; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2>Receitas Cadastradas</h2>
+        <a th:href="@{/logout}" class="btn btn-danger">Sair</a>
+    </div>
+    
+    <a th:href="@{/receitas/nova}" class="btn">Nova Receita</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Descrição</th>
+                <th>Custo</th>
+                <th>Tipo</th>
+                <th>Data Registro</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="receita : ${receitas}">
+                <td th:text="${receita.id}">1</td>
+                <td th:text="${receita.nome}">Nome</td>
+                <td th:text="${receita.descricao}">Desc</td>
+                <td th:text="${'R$ ' + receita.custo}">Custo</td>
+                <td th:text="${receita.tipoReceita}">Tipo</td>
+                <td th:text="${receita.dataRegistro}">Data</td>
+                <td class="actions">
+                    <a th:href="@{/receitas/editar/{id}(id=${receita.id})}">Editar</a>
+                    <a th:href="@{/receitas/excluir/{id}(id=${receita.id})}" onclick="return confirm('Deseja realmente excluir?')">Excluir</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(receitas)}">
+                <td colspan="7" style="text-align: center;">Nenhuma receita encontrada.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
