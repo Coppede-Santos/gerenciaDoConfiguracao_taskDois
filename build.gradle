@@ -2,6 +2,8 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.4'
     id 'io.spring.dependency-management' version '1.1.4'
+    id 'checkstyle'
+    id 'pmd'
 }
 
 group = 'com.gerencia'
@@ -23,6 +25,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'com.itextpdf:itext7-core:7.2.5'
     runtimeOnly 'org.postgresql:postgresql'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
@@ -32,6 +36,49 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
+// ─── Tests ────────────────────────────────────────────────────────────────────
 tasks.named('test') {
     useJUnitPlatform()
+
+    // Show test statistics in console
+    testLogging {
+        events 'passed', 'failed', 'skipped'
+        showStandardStreams = false
+        afterSuite { desc, result ->
+            if (!desc.parent) {
+                println "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                println " TEST RESULTS"
+                println "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                println " Total  : ${result.testCount}"
+                println " Passed : ${result.successfulTestCount}"
+                println " Failed : ${result.failedTestCount}"
+                println " Skipped: ${result.skippedTestCount}"
+                println " Result : ${result.resultType}"
+                println "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            }
+        }
+    }
 }
+
+// ─── Checkstyle (Linter) ──────────────────────────────────────────────────────
+checkstyle {
+    toolVersion = '10.12.4'
+    configFile = file("${rootDir}/config/checkstyle.xml")
+    ignoreFailures = false          // fails the build on violations
+    showViolations = true
+}
+
+// Don't run checkstyle on test sources
+checkstyleTest.enabled = false
+
+// ─── PMD (Mess Detector) ──────────────────────────────────────────────────────
+pmd {
+    toolVersion = '6.55.0'
+    ignoreFailures = false          // fails the build on violations
+    ruleSets = []                   // clear defaults, use our custom config
+    ruleSetFiles = files("${rootDir}/config/pmd-rules.xml")
+    consoleOutput = true
+}
+
+// Don't run PMD on test sources
+pmdTest.enabled = false
