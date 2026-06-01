@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<ruleset name="taskDois PMD Rules"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0
+                        https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+
+    <description>PMD rules for taskDois – Spring Boot + Java 17</description>
+
+    <!-- ── Best Practices ────────────────────────────────────────────────── -->
+    <rule ref="category/java/bestpractices.xml">
+        <!-- Lombok generates these; suppress false positives -->
+        <exclude name="GuardLogStatement"/>
+        <!-- JUnit 5 uses different annotation style -->
+        <exclude name="JUnitTestsShouldIncludeAssert"/>
+        <exclude name="JUnitAssertionsShouldIncludeMessage"/>
+    </rule>
+
+    <!-- ── Code Style ────────────────────────────────────────────────────── -->
+    <rule ref="category/java/codestyle.xml">
+        <exclude name="AtLeastOneConstructor"/>          <!-- Lombok @NoArgsConstructor -->
+        <exclude name="OnlyOneReturn"/>                  <!-- Too restrictive -->
+        <exclude name="LongVariable"/>                   <!-- Descriptive names are fine -->
+        <exclude name="ShortVariable"/>                  <!-- 'id', 'db' are common -->
+        <exclude name="CommentDefaultAccessModifier"/>
+        <exclude name="DefaultPackage"/>
+        <exclude name="CallSuperInConstructor"/>
+    </rule>
+
+    <!-- ── Design ─────────────────────────────────────────────────────────── -->
+    <rule ref="category/java/design.xml">
+        <exclude name="LawOfDemeter"/>                   <!-- Too strict for Spring -->
+        <exclude name="LoosePackageCoupling"/>
+        <exclude name="DataClass"/>                      <!-- DTOs / Entities are data classes -->
+    </rule>
+
+    <!-- ── Error Prone ───────────────────────────────────────────────────── -->
+    <rule ref="category/java/errorprone.xml">
+        <exclude name="BeanMembersShouldSerialize"/>     <!-- Spring beans don't need Serializable -->
+        <exclude name="DataflowAnomalyAnalysis"/>        <!-- Too many false positives -->
+    </rule>
+
+    <!-- ── Performance ───────────────────────────────────────────────────── -->
+    <rule ref="category/java/performance.xml"/>
+
+    <!-- ── Security ──────────────────────────────────────────────────────── -->
+    <rule ref="category/java/security.xml"/>
+
+</ruleset>
