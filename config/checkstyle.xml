@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+    "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<!--
+    Checkstyle configuration for taskDois
+    Based on Google Java Style, relaxed for Spring Boot + Lombok projects.
+-->
+<module name="Checker">
+
+    <property name="severity" value="error"/>
+    <property name="fileExtensions" value="java"/>
+
+    <!-- ── File-level checks ─────────────────────────────── -->
+    <module name="FileTabCharacter">
+        <property name="eachLine" value="true"/>
+    </module>
+
+    <module name="NewlineAtEndOfFile"/>
+
+    <module name="FileLength">
+        <property name="max" value="500"/>
+    </module>
+
+    <!-- ── Tree Walker (per-file AST checks) ─────────────── -->
+    <module name="TreeWalker">
+
+        <!-- Naming conventions -->
+        <module name="TypeName"/>                        <!-- Classes: PascalCase -->
+        <module name="MethodName"/>                      <!-- Methods: camelCase -->
+        <module name="ParameterName"/>                   <!-- Parameters: camelCase -->
+        <module name="LocalVariableName"/>               <!-- Local vars: camelCase -->
+        <module name="ConstantName"/>                    <!-- Constants: UPPER_CASE -->
+        <module name="PackageName">
+            <property name="format" value="^[a-z]+(\.[a-z][a-z0-9]*)*$"/>
+        </module>
+
+        <!-- Imports -->
+        <module name="AvoidStarImport"/>                 <!-- No wildcard imports -->
+        <module name="UnusedImports"/>                   <!-- No unused imports -->
+        <module name="RedundantImport"/>
+
+        <!-- Whitespace -->
+        <module name="WhitespaceAround">
+            <property name="allowEmptyConstructors" value="true"/>
+            <property name="allowEmptyMethods" value="true"/>
+            <property name="allowEmptyLambdas" value="true"/>
+        </module>
+        <module name="NoWhitespaceAtEndOfLine"/>
+        <module name="EmptyLineSeparator">
+            <property name="allowNoEmptyLineBetweenFields" value="true"/>
+            <property name="tokens" value="METHOD_DEF, CTOR_DEF, CLASS_DEF, INTERFACE_DEF"/>
+        </module>
+
+        <!-- Line length -->
+        <module name="LineLength">
+            <property name="max" value="120"/>
+            <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
+        </module>
+
+        <!-- Braces -->
+        <module name="NeedBraces"/>                      <!-- Always use { } -->
+        <module name="LeftCurly"/>
+        <module name="RightCurly"/>
+
+        <!-- Code quality basics -->
+        <module name="EmptyBlock">
+            <property name="option" value="TEXT"/>
+        </module>
+        <module name="EmptyCatchBlock">
+            <property name="exceptionVariableName" value="expected|ignore"/>
+        </module>
+        <module name="SimplifyBooleanExpression"/>
+        <module name="SimplifyBooleanReturn"/>
+        <module name="StringLiteralEquality"/>           <!-- No str == "value" -->
+        <module name="EqualsHashCode"/>                  <!-- If equals(), then hashCode() -->
+        <module name="HiddenField">
+            <property name="ignoreSetter" value="true"/>
+            <property name="ignoreConstructorParameter" value="true"/>
+        </module>
+
+        <!-- Method complexity -->
+        <module name="MethodLength">
+            <property name="max" value="80"/>
+        </module>
+        <module name="ParameterNumber">
+            <property name="max" value="7"/>
+        </module>
+        <module name="CyclomaticComplexity">
+            <property name="max" value="10"/>
+        </module>
+
+        <!-- Annotations: suppress Checkstyle with @SuppressWarnings("checkstyle:...") -->
+        <module name="SuppressWarningsHolder"/>
+    </module>
+
+    <module name="SuppressWarningsFilter"/>
+
+</module>
