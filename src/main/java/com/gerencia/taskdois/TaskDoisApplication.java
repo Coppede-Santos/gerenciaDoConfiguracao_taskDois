@@ -10,15 +10,15 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class TaskDoisApplication {
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         SpringApplication.run(TaskDoisApplication.class, args);
     }
 
     @Bean
-    CommandLineRunner initDatabase(UsuarioRepository usuarioRepository) {
+    CommandLineRunner initDatabase(final UsuarioRepository usuarioRepository) {
         return args -> {
             if (usuarioRepository.count() == 0) {
-                Usuario admin = new Usuario();
+                final Usuario admin = new Usuario();
                 admin.setNome("Administrador");
                 admin.setLogin("messi");
                 admin.setSenha("melhorquepele");

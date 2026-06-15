@@ -9,10 +9,8 @@
 
     <!-- ── Best Practices ────────────────────────────────────────────────── -->
     <rule ref="category/java/bestpractices.xml">
-        <!-- Lombok generates these; suppress false positives -->
-        <exclude name="GuardLogStatement"/>
-        <!-- JUnit 5 uses different annotation style -->
-        <exclude name="JUnitTestsShouldIncludeAssert"/>
+        <exclude name="GuardLogStatement"/> <!-- Lombok generates these; suppress false positives -->
+        <exclude name="JUnitTestsShouldIncludeAssert"/>   <!-- JUnit 5 uses different annotation style -->
         <exclude name="JUnitAssertionsShouldIncludeMessage"/>
     </rule>
 
@@ -32,12 +30,13 @@
         <exclude name="LawOfDemeter"/>                   <!-- Too strict for Spring -->
         <exclude name="LoosePackageCoupling"/>
         <exclude name="DataClass"/>                      <!-- DTOs / Entities are data classes -->
+        <exclude name="AvoidThrowingRawExceptionTypes"/>
     </rule>
 
     <!-- ── Error Prone ───────────────────────────────────────────────────── -->
     <rule ref="category/java/errorprone.xml">
-        <exclude name="BeanMembersShouldSerialize"/>     <!-- Spring beans don't need Serializable -->
         <exclude name="DataflowAnomalyAnalysis"/>        <!-- Too many false positives -->
+        <exclude name="CloseResource"/>                 <!-- Handled by try-with-resources -->
     </rule>
 
     <!-- ── Performance ───────────────────────────────────────────────────── -->

@@ -16,7 +16,7 @@ public class LoginController {
 
     private final UsuarioRepository usuarioRepository;
 
-    public LoginController(UsuarioRepository usuarioRepository) {
+    public LoginController(final UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
     }
 
@@ -26,10 +26,10 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam String login, @RequestParam String senha, Model model, HttpSession session) {
-        Optional<Usuario> usuarioOpt = usuarioRepository.findByLoginAndSenha(login, senha);
+    public String login(final @RequestParam String login,final @RequestParam String senha,final Model model,final HttpSession session) {
+        final Optional<Usuario> usuarioOpt = usuarioRepository.findByLoginAndSenha(login, senha);
         if (usuarioOpt.isPresent()) {
-            Usuario usuario = usuarioOpt.get();
+            final Usuario usuario = usuarioOpt.get();
             if ("ativo".equalsIgnoreCase(usuario.getSituacao())) {
                 session.setAttribute("usuarioLogado", usuario);
                 return "redirect:/receitas";
@@ -44,7 +44,7 @@ public class LoginController {
     }
 
     @GetMapping("/logout")
-    public String logout(HttpSession session) {
+    public String logout(final HttpSession session) {
         session.invalidate();
         return "redirect:/login";
     }

@@ -63,7 +63,7 @@ tasks.named('test') {
 // ─── Checkstyle (Linter) ──────────────────────────────────────────────────────
 checkstyle {
     toolVersion = '10.12.4'
-    configFile = file("${rootDir}/config/checkstyle.xml")
+    configFile = file("config/checkstyle.xml")
     ignoreFailures = false          // fails the build on violations
     showViolations = true
 }

@@ -1,6 +1,9 @@
 package com.gerencia.taskdois.model;
-
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Id;
 import lombok.Data;
 import java.time.LocalDate;
 import java.math.BigDecimal;
@@ -17,7 +20,8 @@ public class Receita {
     private LocalDate dataRegistro;
     private BigDecimal custo;
     private String tipoReceita; // doce ou salgada
-    
+    private String status; // ativa ou inativa
+
     @PrePersist
     public void prePersist() {
         if (dataRegistro == null) {
