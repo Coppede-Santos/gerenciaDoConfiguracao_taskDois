@@ -11,22 +11,6 @@ jobs:
     name: Build, Test & Analyse
     runs-on: ubuntu-latest
 
-    # ── PostgreSQL service (needed for integration tests) ──────────────────
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_DB: taskdois_test
-          POSTGRES_USER: taskdois
-          POSTGRES_PASSWORD: taskdois
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       # ── 1. Checkout ──────────────────────────────────────────────────────
       - name: Checkout code
@@ -82,10 +66,6 @@ jobs:
       # ── 8. Tests ─────────────────────────────────────────────────────────
       - name: Run tests
         run: ./gradlew test --no-daemon
-        env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/taskdois_test
-          SPRING_DATASOURCE_USERNAME: taskdois
-          SPRING_DATASOURCE_PASSWORD: taskdois
 
       - name: Upload test report
         if: always()
