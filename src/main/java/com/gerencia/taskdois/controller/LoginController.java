@@ -26,7 +26,10 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String login(final @RequestParam String login,final @RequestParam String senha,final Model model,final HttpSession session) {
+    public String login(final @RequestParam String login,
+                        final @RequestParam String senha,
+                        final Model model,
+                        final HttpSession session) {
         final Optional<Usuario> usuarioOpt = usuarioRepository.findByLoginAndSenha(login, senha);
         if (usuarioOpt.isPresent()) {
             final Usuario usuario = usuarioOpt.get();

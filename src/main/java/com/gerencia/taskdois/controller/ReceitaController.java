@@ -29,7 +29,9 @@ public class ReceitaController {
     private final PdfService pdfService;
     private static String redLogin = "redirect:/login";
 
-    public ReceitaController(final ReceitaRepository receitaRepository,final EmailService emailService,final PdfService pdfService) {
+    public ReceitaController(final ReceitaRepository receitaRepository,
+                             final EmailService emailService,
+                             final PdfService pdfService) {
         this.receitaRepository = receitaRepository;
         this.emailService = emailService;
         this.pdfService = pdfService;
@@ -128,7 +130,7 @@ public class ReceitaController {
 
         final byte[] pdfBytes = pdfService.gerarPdfReceitas(receitas);
 
-        HttpHeaders headers = new HttpHeaders();
+        final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDispositionFormData("attachment", "receitas.pdf");
 
