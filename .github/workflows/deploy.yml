@@ -50,17 +50,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.VM_SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          # Reintenta ssh-keyscan hasta 3 veces
-          for i in 1 2 3; do
-            ssh-keyscan -T 30 -H ${{ secrets.VM_HOST }} >> ~/.ssh/known_hosts && break
-            echo "Intento $i fallido, reintentando..."
-            sleep 5
-          done
-          # Verifica que known_hosts no está vacío
-          if [ ! -s ~/.ssh/known_hosts ]; then
-            echo "ERROR: no se pudo obtener la host key de la VM"
-            exit 1
-          fi
+          echo "${{ secrets.VM_HOST_KEY }}" >> ~/.ssh/known_hosts
           echo "SSH configurado correctamente"
 
       # ── 6. Copy files to VM ────────────────────────────────────────────
