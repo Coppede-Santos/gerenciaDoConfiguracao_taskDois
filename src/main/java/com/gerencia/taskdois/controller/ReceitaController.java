@@ -130,7 +130,7 @@ public class ReceitaController {
 
         final byte[] pdfBytes = pdfService.gerarPdfReceitas(receitas);
 
-        HttpHeaders headers = new HttpHeaders();
+        final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDispositionFormData("attachment", "receitas.pdf");
 
