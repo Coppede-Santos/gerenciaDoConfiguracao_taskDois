@@ -50,33 +50,44 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.VM_SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -H ${{ secrets.VM_HOST }} >> ~/.ssh/known_hosts
+          # Reintenta ssh-keyscan hasta 3 veces
+          for i in 1 2 3; do
+            ssh-keyscan -T 30 -H ${{ secrets.VM_HOST }} >> ~/.ssh/known_hosts && break
+            echo "Intento $i fallido, reintentando..."
+            sleep 5
+          done
+          # Verifica que known_hosts no está vacío
+          if [ ! -s ~/.ssh/known_hosts ]; then
+            echo "ERROR: no se pudo obtener la host key de la VM"
+            exit 1
+          fi
+          echo "SSH configurado correctamente"
 
       # ── 6. Copy files to VM ────────────────────────────────────────────
       - name: Copy JAR and Docker files to VM
         run: |
           ENV=${{ github.event.inputs.environment }}
 
-          # Cria estrutura de pastas na VM
+          # Crea estructura de carpetas en la VM
           ssh -i ~/.ssh/deploy_key ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} \
             "mkdir -p ~/taskdois/${ENV}"
 
-          # Copia o JAR
+          # Copia el JAR renombrado como app.jar
           scp -i ~/.ssh/deploy_key \
             build/libs/*.jar \
             ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:~/taskdois/${ENV}/app.jar
 
-          # Copia o Dockerfile
+          # Copia el Dockerfile
           scp -i ~/.ssh/deploy_key \
             Dockerfile \
             ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:~/taskdois/${ENV}/Dockerfile
 
-          # Copia o docker-compose do ambiente correto
+          # Copia el docker-compose del ambiente correcto
           scp -i ~/.ssh/deploy_key \
             docker/${ENV}/docker-compose.yml \
             ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:~/taskdois/${ENV}/docker-compose.yml
 
-          # Cria o .env com a senha do banco
+          # Crea el .env con la contraseña de la BD
           ssh -i ~/.ssh/deploy_key ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} \
             "echo 'DB_PASSWORD=${{ secrets.DB_PASSWORD }}' > ~/taskdois/${ENV}/.env"
 
@@ -85,20 +96,9 @@ jobs:
         run: |
           ENV=${{ github.event.inputs.environment }}
 
-          ssh -i ~/.ssh/deploy_key ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << ENDSSH
-            cd ~/taskdois/${ENV}
-
-            # Ajusta o contexto do build no docker-compose para a pasta atual
-            # (o JAR e o Dockerfile já estão na mesma pasta)
-            export DOCKER_BUILDKIT=1
-
-            # Derruba tudo (contenedores + volúmenes = ambiente desde cero)
-            docker compose down -v
-
-            # Sube todo de nuevo (build da imagem + levanta contenedores)
-            docker compose up -d --build
-
-            echo "Deploy de ${ENV} finalizado"
-            echo "Contenedores rodando:"
-            docker compose ps
-          ENDSSH
+          ssh -i ~/.ssh/deploy_key ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} \
+            "cd ~/taskdois/${ENV} && \
+             docker compose down -v && \
+             docker compose up -d --build && \
+             echo 'Deploy de ${ENV} finalizado' && \
+             docker compose ps"
