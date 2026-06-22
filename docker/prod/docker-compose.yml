@@ -1,0 +1,53 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# docker-compose.yml — Ambiente de Produção
+#
+# Uso:
+#   Criar:    docker compose up -d --build
+#   Destruir: docker compose down -v
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  postgres-prod:
+    image: postgres:16-alpine
+    container_name: taskdois-postgres-prod
+    environment:
+      POSTGRES_DB: taskdois_prod
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres-prod-data:/var/lib/postgresql/data
+    networks:
+      - prod-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app_user -d taskdois_prod"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app-prod:
+    image: taskdois-app-prod:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: taskdois-app-prod
+    ports:
+      - "8082:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-prod:5432/taskdois_prod
+      SPRING_DATASOURCE_USERNAME: app_user
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_PROFILES_ACTIVE: prod
+    depends_on:
+      postgres-prod:
+        condition: service_healthy
+    networks:
+      - prod-network
+    restart: on-failure
+
+volumes:
+  postgres-prod-data:
+
+networks:
+  prod-network:
+    driver: bridge

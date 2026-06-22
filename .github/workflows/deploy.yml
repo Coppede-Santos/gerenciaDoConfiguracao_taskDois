@@ -1,0 +1,104 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Ambiente a deployar'
+        required: true
+        type: choice
+        options:
+          - homolog
+          - prod
+
+jobs:
+  deploy:
+    name: Deploy to ${{ github.event.inputs.environment }}
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout ────────────────────────────────────────────────────
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ── 2. Set up Java 17 ──────────────────────────────────────────────
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # ── 3. Cache Gradle ────────────────────────────────────────────────
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      # ── 4. Build JAR ───────────────────────────────────────────────────
+      - name: Build JAR
+        run: |
+          chmod +x ./gradlew
+          ./gradlew bootJar --no-daemon
+
+      # ── 5. Setup SSH ───────────────────────────────────────────────────
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VM_SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.VM_HOST }} >> ~/.ssh/known_hosts
+
+      # ── 6. Copy files to VM ────────────────────────────────────────────
+      - name: Copy JAR and Docker files to VM
+        run: |
+          ENV=${{ github.event.inputs.environment }}
+
+          # Cria estrutura de pastas na VM
+          ssh -i ~/.ssh/deploy_key ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} \
+            "mkdir -p ~/taskdois/${ENV}"
+
+          # Copia o JAR
+          scp -i ~/.ssh/deploy_key \
+            build/libs/*.jar \
+            ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:~/taskdois/${ENV}/app.jar
+
+          # Copia o Dockerfile
+          scp -i ~/.ssh/deploy_key \
+            Dockerfile \
+            ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:~/taskdois/${ENV}/Dockerfile
+
+          # Copia o docker-compose do ambiente correto
+          scp -i ~/.ssh/deploy_key \
+            docker/${ENV}/docker-compose.yml \
+            ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:~/taskdois/${ENV}/docker-compose.yml
+
+          # Cria o .env com a senha do banco
+          ssh -i ~/.ssh/deploy_key ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} \
+            "echo 'DB_PASSWORD=${{ secrets.DB_PASSWORD }}' > ~/taskdois/${ENV}/.env"
+
+      # ── 7. Deploy ──────────────────────────────────────────────────────
+      - name: Deploy containers
+        run: |
+          ENV=${{ github.event.inputs.environment }}
+
+          ssh -i ~/.ssh/deploy_key ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << ENDSSH
+            cd ~/taskdois/${ENV}
+
+            # Ajusta o contexto do build no docker-compose para a pasta atual
+            # (o JAR e o Dockerfile já estão na mesma pasta)
+            export DOCKER_BUILDKIT=1
+
+            # Derruba tudo (contenedores + volúmenes = ambiente desde cero)
+            docker compose down -v
+
+            # Sube todo de nuevo (build da imagem + levanta contenedores)
+            docker compose up -d --build
+
+            echo "Deploy de ${ENV} finalizado"
+            echo "Contenedores rodando:"
+            docker compose ps
+          ENDSSH

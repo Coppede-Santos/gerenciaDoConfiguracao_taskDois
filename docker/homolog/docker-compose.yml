@@ -1,0 +1,53 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# docker-compose.yml — Ambiente de Homologação
+#
+# Uso:
+#   Criar:    docker compose up -d --build
+#   Destruir: docker compose down -v
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  postgres-homolog:
+    image: postgres:16-alpine
+    container_name: taskdois-postgres-homolog
+    environment:
+      POSTGRES_DB: taskdois_homolog
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres-homolog-data:/var/lib/postgresql/data
+    networks:
+      - homolog-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app_user -d taskdois_homolog"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app-homolog:
+    image: taskdois-app-homolog:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: taskdois-app-homolog
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-homolog:5432/taskdois_homolog
+      SPRING_DATASOURCE_USERNAME: app_user
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_PROFILES_ACTIVE: homolog
+    depends_on:
+      postgres-homolog:
+        condition: service_healthy
+    networks:
+      - homolog-network
+    restart: on-failure
+
+volumes:
+  postgres-homolog-data:
+
+networks:
+  homolog-network:
+    driver: bridge
