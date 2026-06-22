@@ -14,7 +14,7 @@ on:
 jobs:
   deploy:
     name: Deploy to ${{ github.event.inputs.environment }}
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       # ── 1. Checkout ────────────────────────────────────────────────────
@@ -39,56 +39,48 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle-
 
       # ── 4. Build JAR ───────────────────────────────────────────────────
+      # O runner já está na VM, então compilamos direto aqui
       - name: Build JAR
         run: |
           chmod +x ./gradlew
           ./gradlew bootJar --no-daemon
 
-      # ── 5. Setup SSH ───────────────────────────────────────────────────
-      - name: Setup SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.VM_SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          echo "${{ secrets.VM_HOST_KEY }}" >> ~/.ssh/known_hosts
-          echo "SSH configurado correctamente"
-
-      # ── 6. Copy files to VM ────────────────────────────────────────────
-      - name: Copy JAR and Docker files to VM
+      # ── 5. Preparar arquivos de deploy ─────────────────────────────────
+      - name: Prepare deploy files
         run: |
           ENV=${{ github.event.inputs.environment }}
 
-          # Crea estructura de carpetas en la VM
-          ssh -i ~/.ssh/deploy_key ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} \
-            "mkdir -p ~/taskdois/${ENV}"
+          # Cria estrutura de pastas
+          mkdir -p ~/taskdois/${ENV}
 
-          # Copia el JAR renombrado como app.jar
-          scp -i ~/.ssh/deploy_key \
-            build/libs/*.jar \
-            ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:~/taskdois/${ENV}/app.jar
+          # Copia o JAR como app.jar
+          cp build/libs/*.jar ~/taskdois/${ENV}/app.jar
 
-          # Copia el Dockerfile
-          scp -i ~/.ssh/deploy_key \
-            Dockerfile \
-            ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:~/taskdois/${ENV}/Dockerfile
+          # Copia o Dockerfile
+          cp Dockerfile ~/taskdois/${ENV}/Dockerfile
 
-          # Copia el docker-compose del ambiente correcto
-          scp -i ~/.ssh/deploy_key \
-            docker/${ENV}/docker-compose.yml \
-            ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:~/taskdois/${ENV}/docker-compose.yml
+          # Copia o docker-compose do ambiente correto
+          cp docker/${ENV}/docker-compose.yml ~/taskdois/${ENV}/docker-compose.yml
 
-          # Crea el .env con la contraseña de la BD
-          ssh -i ~/.ssh/deploy_key ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} \
-            "echo 'DB_PASSWORD=${{ secrets.DB_PASSWORD }}' > ~/taskdois/${ENV}/.env"
+          # Cria o .env com a senha do banco
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" > ~/taskdois/${ENV}/.env
 
-      # ── 7. Deploy ──────────────────────────────────────────────────────
+          echo "Arquivos copiados para ~/taskdois/${ENV}/"
+          ls -la ~/taskdois/${ENV}/
+
+      # ── 6. Deploy ──────────────────────────────────────────────────────
       - name: Deploy containers
         run: |
           ENV=${{ github.event.inputs.environment }}
 
-          ssh -i ~/.ssh/deploy_key ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} \
-            "cd ~/taskdois/${ENV} && \
-             docker compose down -v && \
-             docker compose up -d --build && \
-             echo 'Deploy de ${ENV} finalizado' && \
-             docker compose ps"
+          cd ~/taskdois/${ENV}
+
+          # Derruba tudo (contenedores + volúmenes = ambiente desde cero)
+          docker compose down -v
+
+          # Sube tudo de novo (build da imagem + levanta contenedores)
+          docker compose up -d --build
+
+          echo "Deploy de ${ENV} finalizado"
+          echo "Contenedores rodando:"
+          docker compose ps
