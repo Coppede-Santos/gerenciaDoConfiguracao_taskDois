@@ -33,13 +33,13 @@ class ReceitaTest {
         receita.setNome("Pizza");
         receita.setTipoReceita("salgada");
         receita.setCusto(new BigDecimal("30.00"));
-        receita.setStatus("ativa");
+        receita.setAtivo(true);
 
         // Verificar que los valores se guardaron correctamente
         assertEquals(1L, receita.getId());
         assertEquals("Pizza", receita.getNome());
         assertEquals("salgada", receita.getTipoReceita());
         assertEquals(new BigDecimal("30.00"), receita.getCusto());
-        assertEquals("ativa", receita.getStatus());
+        assertEquals(true, receita.getAtivo());
     }
 }

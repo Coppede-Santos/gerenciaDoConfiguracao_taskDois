@@ -35,7 +35,7 @@ class ReceitaServiceTest {
         receita.setTipoReceita("doce");
         receita.setCusto(new BigDecimal("25.50"));
         receita.setDataRegistro(LocalDate.now());
-        receita.setStatus("ativa");
+        receita.setAtivo(true);
     }
 
     // Test 13: Verificar que se puede buscar receta por ID
