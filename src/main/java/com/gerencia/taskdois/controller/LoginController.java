@@ -26,7 +26,7 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String login(final @RequestParam String login,
+    public String loginnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn(final @RequestParam String login,
                         final @RequestParam String senha,
                         final Model model,
                         final HttpSession session) {
