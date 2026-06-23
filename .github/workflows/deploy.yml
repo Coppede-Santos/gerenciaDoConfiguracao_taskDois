@@ -76,7 +76,7 @@ jobs:
           cd ~/taskdois/${ENV}
 
           # Derruba tudo (contenedores + volúmenes = ambiente desde cero)
-          docker compose down -v
+          docker compose down
 
           # Sube tudo de novo (build da imagem + levanta contenedores)
           docker compose up -d --build
