@@ -39,7 +39,7 @@ class EmailServiceTest {
         receita.setNome("Bolo de Chocolate");
         receita.setTipoReceita("doce");
         receita.setCusto(new BigDecimal("25.50"));
-        receita.setStatus("ativa");
+        receita.setAtivo(true);
     }
 
     // Test 1: Verificar que se envía email cuando se crea una receta

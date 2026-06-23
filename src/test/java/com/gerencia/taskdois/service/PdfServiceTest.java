@@ -26,7 +26,7 @@ class PdfServiceTest {
         receita1.setNome("Bolo de Chocolate");
         receita1.setTipoReceita("doce");
         receita1.setCusto(new BigDecimal("25.50"));
-        receita1.setStatus("ativa");
+        receita1.setAtivo(true);
         receitas.add(receita1);
     }
 
