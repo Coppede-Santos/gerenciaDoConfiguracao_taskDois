@@ -35,14 +35,14 @@ public class PdfService {
             table.addHeaderCell("Nome");
             table.addHeaderCell("Tipo");
             table.addHeaderCell("Custo");
-            table.addHeaderCell("Status");
+            table.addHeaderCell("Ativo");
 
             for (final Receita receita : receitas) {
                 table.addCell(String.valueOf(receita.getId()));
                 table.addCell(receita.getNome());
                 table.addCell(receita.getTipoReceita() != null ? receita.getTipoReceita() : "");
                 table.addCell(receita.getCusto() != null ? "R$ " + receita.getCusto() : "");
-                table.addCell(receita.getStatus() != null ? receita.getStatus() : "ativa");
+                table.addCell(receita.getAtivo() ? "ativa" : "inativa");
             }
 
             document.add(table);

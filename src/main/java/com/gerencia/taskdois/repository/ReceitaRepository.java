@@ -10,15 +10,15 @@ import java.util.List;
 
 public interface ReceitaRepository extends JpaRepository<Receita, Long> {
 
-    List<Receita> findByStatus(String status);
+    List<Receita> findByAtivo(Boolean ativo);
 
     List<Receita> findByDataRegistroBetween(LocalDate inicio, LocalDate fim);
 
     @Query("SELECT r FROM Receita r WHERE " +
-           "(:status IS NULL OR r.status = :status) AND " +
+           "(:ativo IS NULL OR r.ativo = :ativo) AND " +
            "(:dataInicio IS NULL OR r.dataRegistro >= :dataInicio) AND " +
            "(:dataFim IS NULL OR r.dataRegistro <= :dataFim)")
-    List<Receita> findByFiltros(@Param("status") String status,
+    List<Receita> findByFiltros(@Param("ativo") Boolean ativo,
                                  @Param("dataInicio") LocalDate dataInicio,
                                  @Param("dataFim") LocalDate dataFim);
 }

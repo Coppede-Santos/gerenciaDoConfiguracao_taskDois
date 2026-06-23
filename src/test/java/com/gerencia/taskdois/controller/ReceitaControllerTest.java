@@ -75,7 +75,7 @@ class ReceitaControllerTest {
         when(receitaRepository.findByFiltros(any(), any(), any())).thenReturn(receitas);
 
         // Ejecutar listar con filtros
-        String view = receitaController.listar("ativa", LocalDate.now(), LocalDate.now(), model, session);
+        String view = receitaController.listar(true, LocalDate.now(), LocalDate.now(), model, session);
 
         // Verificar que se usa el método de filtros
         assertEquals("receitas/lista", view);

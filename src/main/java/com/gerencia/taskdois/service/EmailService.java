@@ -67,7 +67,7 @@ public class EmailService {
             receita.getTipoReceita(),
             receita.getCusto(),
             receita.getDataRegistro(),
-            receita.getStatus() != null ? receita.getStatus() : "ativa"
+            receita.getAtivo() ? "ativa" : "inativa"
         );
     }
 
@@ -89,7 +89,7 @@ public class EmailService {
             receita.getTipoReceita(),
             receita.getCusto(),
             receita.getDataRegistro(),
-            receita.getStatus() != null ? receita.getStatus() : "ativa"
+            receita.getAtivo() ? "ativa" : "inativa"
         );
     }
 }

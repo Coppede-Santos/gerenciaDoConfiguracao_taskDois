@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import javax.swing.text.StyledEditorKit;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -43,7 +45,7 @@ public class ReceitaController {
 
     @GetMapping
     public String listar(
-            final @RequestParam(required = false) String status,
+            final @RequestParam(required = false) Boolean ativo,
             final @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
             final @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim,
             final Model model,
@@ -53,14 +55,14 @@ public class ReceitaController {
         }
 
         List<Receita> receitas;
-        if (status != null || dataInicio != null || dataFim != null) {
-            receitas = receitaRepository.findByFiltros(status, dataInicio, dataFim);
+        if (ativo != null || dataInicio != null || dataFim != null) {
+            receitas = receitaRepository.findByFiltros(ativo, dataInicio, dataFim);
         } else {
             receitas = receitaRepository.findAll();
         }
 
         model.addAttribute("receitas", receitas);
-        model.addAttribute("statusFiltro", status);
+        model.addAttribute("ativoFiltro", ativo);
         model.addAttribute("dataInicio", dataInicio);
         model.addAttribute("dataFim", dataFim);
         return "receitas/lista";
@@ -113,7 +115,7 @@ public class ReceitaController {
 
     @GetMapping("/exportar-pdf")
     public ResponseEntity<byte[]> exportarPdf(
-            final @RequestParam(required = false) String status,
+            final @RequestParam(required = false) Boolean ativo,
             final @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
             final @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim,
             final HttpSession session) {
@@ -122,8 +124,8 @@ public class ReceitaController {
         }
 
         List<Receita> receitas;
-        if (status != null || dataInicio != null || dataFim != null) {
-            receitas = receitaRepository.findByFiltros(status, dataInicio, dataFim);
+        if (ativo != null || dataInicio != null || dataFim != null) {
+            receitas = receitaRepository.findByFiltros(ativo, dataInicio, dataFim);
         } else {
             receitas = receitaRepository.findAll();
         }

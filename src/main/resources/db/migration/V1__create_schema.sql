@@ -27,9 +27,9 @@ CREATE TABLE receita (
     data_registro DATE           NOT NULL,
     custo         NUMERIC(10, 2) NOT NULL,
     tipo_receita  VARCHAR(20)    NOT NULL,
-    status        VARCHAR(20)    NOT NULL
+    ativo        BOOLEAN        NOT NULL
 );
 
 -- Índices para consultas frequentes (filtros por tipo/status são comuns em listagens)
 CREATE INDEX idx_receita_tipo_receita ON receita (tipo_receita);
-CREATE INDEX idx_receita_status ON receita (status);
+CREATE INDEX idx_receita_status ON receita (ativo);

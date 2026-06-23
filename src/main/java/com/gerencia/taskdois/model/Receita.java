@@ -20,7 +20,7 @@ public class Receita {
     private LocalDate dataRegistro;
     private BigDecimal custo;
     private String tipoReceita; // doce ou salgada
-    private String status; // ativa ou inativa
+    private Boolean ativo = true;
 
     @PrePersist
     public void prePersist() {

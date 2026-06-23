@@ -16,6 +16,8 @@
         .header { display: flex; justify-content: space-between; align-items: center; }
         .btn-danger { background-color: #dc3545; }
         .btn-danger:hover { background-color: #c82333; }
+        .status-ativo { color: green; font-weight: bold; }
+        .status-inativo { color: red; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -25,37 +27,38 @@
         <h2>Receitas Cadastradas</h2>
         <a th:href="@{/logout}" class="btn btn-danger">Sair</a>
     </div>
-    
+
     <a th:href="@{/receitas/nova}" class="btn">Nova Receita</a>
 
     <table>
         <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>Descrição</th>
-                <th>Custo</th>
-                <th>Tipo</th>
-                <th>Data Registro</th>
-                <th>Ações</th>
-            </tr>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Custo</th>
+            <th>Tipo</th>
+            <th>Ativa</th>
+            <th>Ações</th>
+        </tr>
         </thead>
         <tbody>
-            <tr th:each="receita : ${receitas}">
-                <td th:text="${receita.id}">1</td>
-                <td th:text="${receita.nome}">Nome</td>
-                <td th:text="${receita.descricao}">Desc</td>
-                <td th:text="${'R$ ' + receita.custo}">Custo</td>
-                <td th:text="${receita.tipoReceita}">Tipo</td>
-                <td th:text="${receita.dataRegistro}">Data</td>
-                <td class="actions">
-                    <a th:href="@{/receitas/editar/{id}(id=${receita.id})}">Editar</a>
-                    <a th:href="@{/receitas/excluir/{id}(id=${receita.id})}" onclick="return confirm('Deseja realmente excluir?')">Excluir</a>
-                </td>
-            </tr>
-            <tr th:if="${#lists.isEmpty(receitas)}">
-                <td colspan="7" style="text-align: center;">Nenhuma receita encontrada.</td>
-            </tr>
+        <tr th:each="receita : ${receitas}">
+            <td th:text="${receita.id}">1</td>
+            <td th:text="${receita.nome}">Nome</td>
+            <td th:text="${#numbers.formatCurrency(receita.custo)}">Custo</td>
+            <td th:text="${receita.tipoReceita}">Tipo</td>
+            <td>
+                <span th:if="${receita.ativo}" class="status-ativo">Sim</span>
+                <span th:unless="${receita.ativo}" class="status-inativo">Não</span>
+            </td>
+            <td class="actions">
+                <a th:href="@{/receitas/editar/{id}(id=${receita.id})}">Editar</a>
+                <a th:href="@{/receitas/excluir/{id}(id=${receita.id})}" onclick="return confirm('Deseja realmente excluir?')">Excluir</a>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(receitas)}">
+            <td colspan="6" style="text-align: center;">Nenhuma receita encontrada.</td>
+        </tr>
         </tbody>
     </table>
 </div>
