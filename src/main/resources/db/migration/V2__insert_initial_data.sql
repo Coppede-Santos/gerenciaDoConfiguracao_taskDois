@@ -1,4 +1,4 @@
--- V3__insert_initial_data.sql
+-- V2__insert_initial_data.sql
 -- Dados iniciais para demonstração dos ambientes de Homologação e Produção.
 -- Executado automaticamente pelo Flyway na primeira inicialização do ambiente.
 
