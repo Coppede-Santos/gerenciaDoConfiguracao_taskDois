@@ -4,7 +4,7 @@
 
 -- Usuário administrador (senha em texto plano para fins acadêmicos)
 INSERT INTO usuario (nome, login, senha, situacao) VALUES
-    ('Administrador', 'admin', 'admin', 'ativo');
+    ('Administrador', 'messi@gmail.com', 'melhorquepele', 'ativo');
 
 -- Receitas de exemplo
 INSERT INTO receita (nome, descricao, data_registro, custo, tipo_receita, ativo) VALUES
