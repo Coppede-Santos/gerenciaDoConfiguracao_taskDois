@@ -15,7 +15,7 @@ public class Receita {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nomeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee;
+    private String nome;
     private String descricao;
     private LocalDate dataRegistro;
     private BigDecimal custo;
@@ -24,8 +24,7 @@ public class Receita {
 
     @PrePersist
     public void prePersist() {
-        if (dataRegistro == null) {
-            dataRegistro = LocalDate.now();
-        }
+        if (dataRegistro == null)  dataRegistro = LocalDate.now();
+
     }
 }
