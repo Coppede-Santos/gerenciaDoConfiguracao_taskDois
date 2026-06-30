@@ -1,4 +1,4 @@
--- V1__create_schema.sql
+-- V1__create_schemav4__add_table_cat.sql
 -- Cria o esquema inicial do banco de dados taskDois.
 -- Tabelas: usuario, receita.
 

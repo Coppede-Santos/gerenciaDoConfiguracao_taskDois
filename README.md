@@ -120,12 +120,12 @@ Em outra janela de terminal, execute:
 
 ```bash
 cd gerenciaDoConfiguracao_taskDois
-psql -h localhost -U app_user -d taskdois -f insert_receitas.sql
+psql -h localhost -U app_user -d taskdois -f insert_receitasv4__add_table_cat.sql
 ```
 
 Digite a senha quando solicitado: `123456789`
 
-O script `insert_receitas.sql` já está incluído no repositório e irá inserir 10 receitas de exemplo.
+O script `insert_receitasv4__add_table_cat.sql` já está incluído no repositório e irá inserir 10 receitas de exemplo.
 
 ---
 
@@ -222,7 +222,7 @@ Com a aplicação rodando, em outra sessão SSH, execute o script SQL incluído 
 
 ```bash
 cd ~/gerenciaDoConfiguracao_taskDois
-psql -h localhost -U app_user -d taskdois -f insert_receitas.sql
+psql -h localhost -U app_user -d taskdois -f insert_receitasv4__add_table_cat.sql
 ```
 
 Senha: `123456789`
@@ -268,7 +268,7 @@ taskDois/
 ├── build.gradle                     # Configuração Gradle
 ├── gradlew                          # Gradle Wrapper (Linux/Mac)
 ├── gradlew.bat                      # Gradle Wrapper (Windows)
-├── insert_receitas.sql              # Script de dados exemplo
+├── insert_receitasv4__add_table_cat.sql              # Script de dados exemplo
 ├── README.md                        # Este arquivo
 └── DOCUMENTACAO.md                  # Documentação completa
 

@@ -1,4 +1,4 @@
--- V3__add_table_instrumento_cozinha.sql
+-- V3__add_table_instrumento_cozinhav4__add_table_cat.sql
 -- Adiciona tabela de instrumentos de cozinha ao esquema.
 -- Aplicada automaticamente pelo Flyway ao atualizar o ambiente.
 

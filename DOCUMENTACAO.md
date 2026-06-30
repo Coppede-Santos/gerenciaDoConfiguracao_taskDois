@@ -390,7 +390,7 @@ Started TaskDoisApplication in X.XXX seconds
 **Em outra sessão SSH, criar script SQL:**
 ```bash
 cd ~/gerenciaDoConfiguracao_taskDois
-nano insert_receitas.sql
+nano insert_receitasv4__add_table_cat.sql
 ```
 
 **Conteúdo do script:**
@@ -410,7 +410,7 @@ INSERT INTO receita (nome, descricao, data_registro, custo, tipo_receita) VALUES
 
 **Salvar e executar:**
 ```bash
-psql -h localhost -U app_user -d taskdois -f insert_receitas.sql
+psql -h localhost -U app_user -d taskdois -f insert_receitasv4__add_table_cat.sql
 ```
 Senha: `123456789`
 
@@ -537,7 +537,7 @@ curl http://localhost:8080/login
 | Tabelas não criadas automaticamente | 5 min | Verificar `ddl-auto=create-drop` |
 | Aplicação não acessível externamente | 8 min | Adicionar `server.address=0.0.0.0` |
 | Erro de autenticação PostgreSQL (Peer authentication) | 3 min | Usar `-h localhost` no psql |
-| Arquivo insert_receitas.sql não encontrado | 2 min | Navegar para diretório correto |
+| Arquivo insert_receitasv4__add_table_cat.sql não encontrado | 2 min | Navegar para diretório correto |
 
 ---
 
