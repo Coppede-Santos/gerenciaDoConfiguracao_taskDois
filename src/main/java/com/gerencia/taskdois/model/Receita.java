@@ -24,7 +24,8 @@ public class Receita {
 
     @PrePersist
     public void prePersist() {
-        if (dataRegistro == null) dataRegistro = LocalDate.now();
-
+        if (dataRegistro == null) {
+            dataRegistro = LocalDate.now();
+        }
     }
 }
